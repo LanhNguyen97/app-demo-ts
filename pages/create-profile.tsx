@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/label-has-for */
 /* eslint-disable no-useless-escape */
@@ -23,7 +24,9 @@ type Inputs = {
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 const CreateProfile = (props: any) => {
-    const { register, handleSubmit, watch, errors } = useForm<Inputs>();
+    const { register, handleSubmit, watch, errors, reset, setValue } = useForm<
+        Inputs
+    >();
 
     const [state, setState] = useImmer({
         name: "",
@@ -58,8 +61,9 @@ const CreateProfile = (props: any) => {
         }
     };
 
-    const onSignUp = (data: any) => {
+    const onSignUp = (data: any, e) => {
         setStateCommon({ dataForm: data });
+        e.target.reset();
     };
 
     return (
