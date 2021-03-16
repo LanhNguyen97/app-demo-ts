@@ -9,7 +9,6 @@ import { useImmer } from "use-immer";
 import Button from "@Components/Button";
 import Input from "@Components/Input";
 import { WrapperSignIn, TitleSignIn } from "@Styled/style.signIn";
-import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import dynamic from "next/dynamic";
 import { getErrorMessage } from "@Utils/message";
@@ -30,17 +29,10 @@ const CreateProfile = (props: any) => {
     >();
 
     const [state, setState] = useImmer({
-        name: "",
-        userName: "",
-        passWord: "",
-        isLoading: false,
-        message: "",
-        isMatching: false,
-        showError: false,
         dataForm: {},
     });
+
     let _isMounted = true;
-    const router = useRouter();
 
     useEffect(() => {
         return () => {
@@ -197,7 +189,7 @@ const CreateProfile = (props: any) => {
                                     className="w-100"
                                     type="submit"
                                 >
-                                    {state.isLoading ? "Loading..." : "Create"}
+                                    Create
                                 </Button>
                             </div>
                         </form>
