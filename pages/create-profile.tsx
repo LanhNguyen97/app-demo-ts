@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 /* eslint-disable prettier/prettier */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/label-has-for */
@@ -11,7 +12,7 @@ import Input from "@Components/Input";
 import { WrapperSignIn, TitleSignIn } from "@Styled/style.signIn";
 import { useForm } from "react-hook-form";
 import dynamic from "next/dynamic";
-import { getErrorMessage } from "@Utils/message";
+import { getErrorMessage, VALIDATION_RULES } from "@Utils/message";
 
 type Inputs = {
     name: string;
@@ -78,9 +79,7 @@ const CreateProfile = (props: any) => {
                                     returnName
                                     name="name"
                                     register={register({
-                                        required: true,
-                                        maxLength: 255,
-                                        minLength: 1,
+                                        ...VALIDATION_RULES["name"],
                                     })}
                                     error={
                                         name?.type &&
@@ -94,9 +93,7 @@ const CreateProfile = (props: any) => {
                                     returnName
                                     name="userName"
                                     register={register({
-                                        required: true,
-                                        maxLength: 255,
-                                        minLength: 1,
+                                        ...VALIDATION_RULES["userName"],
                                     })}
                                     error={
                                         userName?.type &&
@@ -113,11 +110,7 @@ const CreateProfile = (props: any) => {
                                     returnName
                                     name="email"
                                     register={register({
-                                        required: true,
-                                        pattern: {
-                                            value: /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/,
-                                            message: "Email chưa hợp lệ",
-                                        },
+                                        ...VALIDATION_RULES["email"],
                                     })}
                                     error={
                                         email?.type &&
@@ -134,12 +127,7 @@ const CreateProfile = (props: any) => {
                                     returnName
                                     name="phone"
                                     register={register({
-                                        required: true,
-                                        pattern: {
-                                            value: /^([0-9]{10,11})$/,
-                                            message:
-                                                "Số điện thoại phải từ 10 đến 11 ký tự.",
-                                        },
+                                        ...VALIDATION_RULES["phone"],
                                     })}
                                     error={
                                         phone?.type &&
@@ -155,7 +143,9 @@ const CreateProfile = (props: any) => {
                                     label="Address"
                                     returnName
                                     name="address"
-                                    register={register({ required: true })}
+                                    register={register({
+                                        ...VALIDATION_RULES["address"],
+                                    })}
                                     error={
                                         address?.type &&
                                         getErrorMessage(address?.type ?? "", "")
