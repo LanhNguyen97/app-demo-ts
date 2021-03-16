@@ -12,6 +12,7 @@ import { WrapperSignIn, TitleSignIn } from "@Styled/style.signIn";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import dynamic from "next/dynamic";
+import { getErrorMessage } from "@Utils/message";
 
 type Inputs = {
     name: string;
@@ -66,30 +67,33 @@ const CreateProfile = (props: any) => {
         e.target.reset();
     };
 
+    const onError = err => {
+        console.log("onError ===>", err);
+    };
+
+    const { name, phone, userName, address, email } = errors;
     return (
         <div className="container">
             <div className="row">
                 <div className="col-12">
-                    <WrapperSignIn className="wrapper-sign-in">
+                    <WrapperSignIn className="wrapper-sign-in mb-4">
                         <TitleSignIn>Create Profile</TitleSignIn>
-                        <form onSubmit={handleSubmit(onSignUp)}>
+                        <form onSubmit={handleSubmit(onSignUp, onError)}>
                             <div className="mb-3">
                                 <Input
                                     label="Name"
                                     type="text"
                                     returnName
                                     name="name"
-                                    register={register}
-                                    // register={register({
-                                    //     required: true,
-                                    //     pattern: {
-                                    //         value: /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/,
-                                    //         message: "Hello",
-                                    //     },
-                                    //     validate: {
-                                    //         test1: value => value === "1",
-                                    //     },
-                                    // })}
+                                    register={register({
+                                        required: true,
+                                        maxLength: 255,
+                                        minLength: 1,
+                                    })}
+                                    error={
+                                        name?.type &&
+                                        getErrorMessage(name?.type ?? "", "")
+                                    }
                                 />
                             </div>
                             <div className="mb-3">
@@ -97,7 +101,18 @@ const CreateProfile = (props: any) => {
                                     label="User name"
                                     returnName
                                     name="userName"
-                                    register={register}
+                                    register={register({
+                                        required: true,
+                                        maxLength: 255,
+                                        minLength: 1,
+                                    })}
+                                    error={
+                                        userName?.type &&
+                                        getErrorMessage(
+                                            userName?.type ?? "",
+                                            ""
+                                        )
+                                    }
                                 />
                             </div>
                             <div className="mb-3">
@@ -106,16 +121,19 @@ const CreateProfile = (props: any) => {
                                     returnName
                                     name="email"
                                     register={register({
-                                        // pattern: {
-                                        //     value: /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/,
-                                        // },
-                                        validate: {
-                                            isNotEmail: value =>
-                                                !!value.match(
-                                                    /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/
-                                                ),
+                                        required: true,
+                                        pattern: {
+                                            value: /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/,
+                                            message: "Email chưa hợp lệ",
                                         },
                                     })}
+                                    error={
+                                        email?.type &&
+                                        getErrorMessage(
+                                            email?.type,
+                                            "Email chưa hợp lệ"
+                                        )
+                                    }
                                 />
                             </div>
                             <div className="mb-3">
@@ -123,7 +141,21 @@ const CreateProfile = (props: any) => {
                                     label="Phone"
                                     returnName
                                     name="phone"
-                                    register={register}
+                                    register={register({
+                                        required: true,
+                                        pattern: {
+                                            value: /^([0-9]{10,11})$/,
+                                            message:
+                                                "Số điện thoại phải từ 10 đến 11 ký tự.",
+                                        },
+                                    })}
+                                    error={
+                                        phone?.type &&
+                                        getErrorMessage(
+                                            phone?.type ?? "",
+                                            "Số điện thoại phải từ 10 đến 11 ký tự."
+                                        )
+                                    }
                                 />
                             </div>
                             <div className="mb-3">
@@ -131,7 +163,11 @@ const CreateProfile = (props: any) => {
                                     label="Address"
                                     returnName
                                     name="address"
-                                    register={register}
+                                    register={register({ required: true })}
+                                    error={
+                                        address?.type &&
+                                        getErrorMessage(address?.type ?? "", "")
+                                    }
                                 />
                             </div>
                             <div className="mb-3">
