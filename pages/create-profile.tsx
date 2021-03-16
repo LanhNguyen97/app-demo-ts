@@ -7,13 +7,10 @@ import React, { useEffect } from "react";
 import { useImmer } from "use-immer";
 import Button from "@Components/Button";
 import Input from "@Components/Input";
-import Alert from "@Components/Alert";
 import { WrapperSignIn, TitleSignIn } from "@Styled/style.signIn";
-import { callApi } from "@Utils/callApi";
-import { generateToken } from "@Utils/token";
-import { setCookie } from "@Utils/cookies";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+import dynamic from "next/dynamic";
 
 type Inputs = {
     name: string;
@@ -22,6 +19,8 @@ type Inputs = {
     gender: string;
     address: string;
 };
+
+const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 const CreateProfile = (props: any) => {
     const { register, handleSubmit, watch, errors } = useForm<Inputs>();
@@ -34,6 +33,7 @@ const CreateProfile = (props: any) => {
         message: "",
         isMatching: false,
         showError: false,
+        dataForm: {},
     });
     let _isMounted = true;
     const router = useRouter();
@@ -44,7 +44,11 @@ const CreateProfile = (props: any) => {
         };
     }, []);
 
-    const setStateCommon = objects => {
+    const setStateCommon = (objects: {
+        [x: string]: any;
+        dataForm?: any;
+        showError?: boolean;
+    }) => {
         if (_isMounted) {
             Object.keys(objects).forEach(key => {
                 setState(draft => {
@@ -54,64 +58,19 @@ const CreateProfile = (props: any) => {
         }
     };
 
-    const onCheckInfoSignUp = async () => {
-        const dataPost = {
-            name: state.name,
-            userName: state.userName,
-            passWord: state.passWord,
-        };
-        const res = await callApi(
-            "https://5e1fc92ee31c6e0014c6000e.mockapi.io/api/user",
-            "post",
-            dataPost
-        );
-
-        if (res) {
-            if (res.status === 201) {
-                // dispatch(initInfo(res.data))
-
-                const token = generateToken({ userId: res.data.userId });
-
-                if (token) {
-                    setCookie("token", token);
-                }
-
-                setStateCommon({
-                    showError: true,
-                    message: "Success.",
-                    isLoading: false,
-                    isMatching: true,
-                    name: "",
-                    userName: "",
-                    passWord: "",
-                });
-
-                router.push("/");
-            }
-        }
+    const onSignUp = (data: any) => {
+        setStateCommon({ dataForm: data });
     };
-
-    const onSignUp = data => {
-        setStateCommon({ isLoading: true });
-        console.log("data ===>", data);
-        // onCheckInfoSignUp();
-    };
-
-    const onClose = () => {
-        setStateCommon({ showError: false });
-    };
-    console.log("props ===>", errors);
 
     return (
         <div className="container">
             <div className="row">
                 <div className="col-12">
                     <WrapperSignIn className="wrapper-sign-in">
-                        <TitleSignIn>Sign Up</TitleSignIn>
+                        <TitleSignIn>Create Profile</TitleSignIn>
                         <form onSubmit={handleSubmit(onSignUp)}>
                             <div className="mb-3">
                                 <Input
-                                    // value={state.name}
                                     label="Name"
                                     type="text"
                                     returnName
@@ -172,30 +131,33 @@ const CreateProfile = (props: any) => {
                                 />
                             </div>
                             <div className="mb-3">
-                                <label>Gender</label>
+                                <label className="mr-3">Gender</label>
                                 <select name="gender" ref={register}>
                                     <option value="female">female</option>
                                     <option value="male">male</option>
                                     <option value="other">other</option>
                                 </select>
                             </div>
-                            {state.showError && (
-                                <Alert
-                                    showClose
-                                    message={state.message}
-                                    className={
-                                        state.isMatching ? "success" : "danger"
-                                    }
-                                    onClose={onClose}
-                                />
-                            )}
+                            <div className="mb-3">
+                                <label className="mr-3">Matrimony</label>
+                                <select name="matrimony" ref={register}>
+                                    <option value="alone">Alone</option>
+                                    <option value="isMarried">isMarried</option>
+                                    <option value="other">other</option>
+                                </select>
+                            </div>
+                            <div className="mb-3">
+                                {Object.keys(state.dataForm).length > 0 ? (
+                                    <DynamicReactJson src={state.dataForm} />
+                                ) : null}
+                            </div>
                             <div>
                                 <Button
                                     theme="success"
                                     className="w-100"
                                     type="submit"
                                 >
-                                    {state.isLoading ? "Loading..." : "Sign up"}
+                                    {state.isLoading ? "Loading..." : "Create"}
                                 </Button>
                             </div>
                         </form>

@@ -140,6 +140,22 @@ const Header = (props: any) => {
                                         </a>
                                     </Link>
                                 </WrapperItemNav>
+                                <WrapperItemNav>
+                                    <Link
+                                        href="/create-profile"
+                                        as="/create-profile"
+                                    >
+                                        <a
+                                            className={
+                                                pathname === "/create-profile"
+                                                    ? "nav-active"
+                                                    : ""
+                                            }
+                                        >
+                                            Create Profile
+                                        </a>
+                                    </Link>
+                                </WrapperItemNav>
                             </WrapperNav>
                             <Flex>
                                 <WrapperIcon
